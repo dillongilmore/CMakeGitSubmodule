@@ -1,0 +1,26 @@
+
+# Created by https://www.gitignore.io
+
+## GitVendor ##
+### The GitVendor in this repo is only for testing purposes and shouldn't   ###
+### be committed with the repo. For project's using this library you should ###
+### be commiting your .gitvendor.                                           ###
+.gitvendor/
+
+### CMake ###
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
+### Vim ###
+# swap
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+# session
+Session.vim
+# temporary
+.netrwhist
+*~
