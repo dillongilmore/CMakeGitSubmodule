@@ -3,27 +3,18 @@
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
-# GIT_SUBMODULES global for storing the submodules we want to automate on
+# GIT_SUBMODULE global for storing the submodules we want to automate on
 # build.
 # ----------------------------------------------------------------------------
-macro (git_submodules_init VENDOR_DIR)
+macro (git_submodule_init VENDOR_DIR)
     set (GIT_VENDOR_DIR "${PROJECT_SOURCE_DIR}/${VENDOR_DIR}")
 
     ### First, get all submodules in
-    if (${GIT_SUBMODULE_CHECKOUT_QUIET})
-        execute_process (
-            COMMAND             git submodule update --init --recursive
-            WORKING_DIRECTORY   ${PROJECT_SOURCE_DIR}
-            OUTPUT_QUIET
-            ERROR_QUIET
-        )
-    else ()
-        execute_process (
-            COMMAND             git submodule update --init --recursive
-            WORKING_DIRECTORY   ${PROJECT_SOURCE_DIR}
-        )
-    endif ()
-endmacro (git_submodules_init)
+    execute_process (
+        COMMAND             git submodule update --init --recursive
+        WORKING_DIRECTORY   ${PROJECT_SOURCE_DIR}
+    )
+endmacro (git_submodule_init)
 
 # ----------------------------------------------------------------------------
 # GetAddSubmodule adds the specified submodule at the specified version.
@@ -54,41 +45,21 @@ macro (git_add_submodule SUBMODULE REMOTE)
     # Note: Execute separate processes here, to make sure each one is run,
     # should one crash (because of branch not existing, this, that ... whatever)
     if (NOT EXISTS "${GIT_VENDOR_DIR}/${SUBMODULE}")
-        if (${GIT_SUBMODULE_CHECKOUT_QUIET})
-            execute_process(
-                COMMAND git submodule add ${GIT_SUBMODULE_${SUBMODULE}_REMOTE} "${GIT_VENDOR_DIR}/${SUBMODULE}"
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                OUTPUT_QUIET
-                ERROR_QUIET
-            )
-        else ()
-            message (STATUS "Submodule currently not in .gitmodules.")
-            execute_process(
-                COMMAND git submodule add ${GIT_SUBMODULE_${SUBMODULE}_REMOTE} "${GIT_VENDOR_DIR}/${SUBMODULE}"
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-            )
-        endif ()
+        message (STATUS "`${SUBMODULE}' currently not in `${GIT_VENDOR_DIR}'.")
+        execute_process(
+            COMMAND git submodule add ${GIT_SUBMODULE_${SUBMODULE}_REMOTE} "${GIT_VENDOR_DIR}/${SUBMODULE}"
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        )
     endif ()
 
-    if (${GIT_SUBMODULE_CHECKOUT_QUIET})
-        execute_process(
-            COMMAND             git checkout ${GIT_SUBMODULE_${SUBMODULE}_VERSION}
-            WORKING_DIRECTORY   ${GIT_VENDOR_DIR}/${SUBMODULE}
-            OUTPUT_QUIET
-            ERROR_QUIET
-        )
-    else ()
-        message(STATUS "Checking out `${SUBMODULE}'s commit/tag/branch `${GIT_SUBMODULE_${SUBMODULE}_VERSION}'")
-        execute_process(
-            COMMAND             git checkout ${GIT_SUBMODULE_${SUBMODULE}_VERSION}
-            WORKING_DIRECTORY   ${GIT_VENDOR_DIR}/${SUBMODULE}
-        )
-    endif()
+    message(STATUS "Checking out `${SUBMODULE}'s commit/tag/branch `${GIT_SUBMODULE_${SUBMODULE}_VERSION}'")
+    execute_process(
+        COMMAND             git checkout ${GIT_SUBMODULE_${SUBMODULE}_VERSION}
+        WORKING_DIRECTORY   ${GIT_VENDOR_DIR}/${SUBMODULE}
+    )
 
     if (${GIT_SUBMODULE_${SUBMODULE}_CMAKE})
-        if (NOT ${GIT_SUBMODULE_CHECKOUT_QUIET})
-            message(STATUS "Appending CMake module path.")
-        endif ()
+        message(STATUS "Appending CMake module path.")
 
         if (EXISTS "${GIT_VENDOR_DIR}/${SUBMODULE}/${GIT_SUBMODULE_${SUBMODULE}_CMAKE}")
             list (APPEND CMAKE_MODULE_PATH "${GIT_VENDOR_DIR}/${SUBMODULE}/${GIT_SUBMODULE_${SUBMODULE}_CMAKE}")
