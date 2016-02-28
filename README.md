@@ -52,3 +52,12 @@ $ git commit -m "Submodules and automation"
 Licensed using The MIT License (MIT). In other words "Don't blame me when
 things break"!
 
+## TODO
+
+- Add support for removing submodules that aren't listed (opt-in feature)
+- Add feature to check for the files that are needed for the project (types?)
+
+## CONTRIBUTING
+
+Scripts here are very simple. Should be easy to add or fix anything. Make a PR!
+
